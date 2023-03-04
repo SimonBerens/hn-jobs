@@ -8,7 +8,7 @@ export function Header() {
                 HN Hiring Trends
             </div>
             <div className="flex flex-row items-center
-                            fixed top-3 right-10">
+                            absolute top-3 right-10">
                 <a href={"https://www.twitter.com/sberens1"}>
                     <BsTwitter className="text-2xl mr-2"/>
                 </a>
