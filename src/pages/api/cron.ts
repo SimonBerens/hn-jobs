@@ -24,7 +24,7 @@ export default async function handler(
         return
     }
     
-    const fullData = await generateHnData(false)
+    const fullData = await generateHnData()
     const smallData = removeCommentsFromHnData(fullData)
     try {
         await Promise.all([

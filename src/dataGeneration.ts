@@ -41,8 +41,10 @@ function cleanComment(comment: string): string {
 }
 
 let i = 0
+const useCachedPosts = process.env.USE_CACHED_POSTS === "true"
+const writeCachedPosts = process.env.WRITE_CACHED_POSTS === "true"
 
-export async function getPostDatum(postId: number, source: HnDataSource, useCachedPosts: boolean): Promise<PostData> {
+export async function getPostDatum(postId: number, source: HnDataSource): Promise<PostData> {
     console.log(i++, postId)
     let postData;
     if (useCachedPosts) {
@@ -50,7 +52,9 @@ export async function getPostDatum(postId: number, source: HnDataSource, useCach
         postData = JSON.parse(raw)
     } else {
         postData = await fetch(`https://hn.algolia.com/api/v1/items/${postId}`).then(res => res.json());
-        await fs.writeFile(`cachedPosts/${postId}-${source}.json`, JSON.stringify(postData), {flag: "wx"})
+        if (writeCachedPosts) {
+            await fs.writeFile(`cachedPosts/${postId}-${source}.json`, JSON.stringify(postData))
+        }
     }
     const topLevelComments: Comment[] = postData.children.filter((comment: any) => comment.text !== null)
         .map((comment: any) => ({
@@ -70,23 +74,23 @@ export async function getPostDatum(postId: number, source: HnDataSource, useCach
     }
 }
 
-async function getPostDataSlowly(postIds: number[], source: HnDataSource, useCachedPosts: boolean): Promise<PostData[]> {
+async function getPostDataSlowly(postIds: number[], source: HnDataSource): Promise<PostData[]> {
     const postComments = []
     for (const postId of postIds) {
         if (!useCachedPosts) {
             await sleep(5000)
         }
-        postComments.push(await getPostDatum(postId, source, useCachedPosts))
+        postComments.push(await getPostDatum(postId, source))
     }
     return postComments
 }
 
-export async function generateHnData(useCachedPosts: boolean): Promise<HnData> {
+export async function generateHnData(): Promise<HnData> {
     const hiringJson = await getRawHiringData()
     return entriesToRecord(await Promise.all(HnDataSources.map(async (source) => {
         const postIds = getPostIds(source, hiringJson)
         console.log(`Found ${postIds.length} posts for ${source}...`)
-        const postComments = await getPostDataSlowly(postIds, source, useCachedPosts)
+        const postComments = await getPostDataSlowly(postIds, source)
         return [source, postComments]
     })))
 }
