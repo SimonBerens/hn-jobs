@@ -58,7 +58,7 @@ export default function Home() {
     const [zoomOptions, setZoomOptions] = useState({})
 
     useEffect(() => {
-        if (isReady) {
+        if (isReady && query.q) {
             const decodedQueryString = base64url.decode(query.q as string)
             const parsedQueryString = JSON.parse(decodedQueryString)
             setCommentFilters(() => parsedQueryString)
