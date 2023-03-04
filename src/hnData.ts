@@ -20,12 +20,12 @@ export type HnDataSource = typeof HnDataSources[number]
 
 export type HnData = Record<HnDataSource, PostData[]>
 
-export type x = {
+type SourceFilters = {
     titleFiler: (title: string) => boolean,
     commentFilter?: (comment: string) => boolean,
 }
 
-export const filterMap: Record<HnDataSource, x> = {
+export const filterMap: Record<HnDataSource, SourceFilters> = {
     hiring: {
         titleFiler: (title: string) => title.toLowerCase().startsWith("ask hn: who is hiring?"),
     },
@@ -59,8 +59,11 @@ function cleanComment(comment: string): string {
 
 let i = 0
 
-export async function getPostDatum(postId: number, source: HnDataSource): Promise<PostData> {
+export async function getPostDatum(postId: number, source: HnDataSource, useCachedPosts): Promise<PostData> {
     console.log(i++, postId)
+    if (useCachedPosts) {
+
+    }
     const postData = await fetch(`https://hn.algolia.com/api/v1/items/${postId}`).then(res => res.json())
     const topLevelComments: Comment[] = postData.children.filter((comment: any) => comment.text !== null)
         .map((comment: any) => ({
