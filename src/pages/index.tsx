@@ -24,6 +24,8 @@ import {RemoveFilterButton} from "@/components/RemoveFilterButton";
 import {AddFilterButton} from "@/components/AddFilterButton";
 import chroma from "chroma-js";
 import Watermark from '@uiw/react-watermark';
+import {useRouter} from "next/router";
+import base64url from "base64url";
 
 
 ChartJS.register(
@@ -44,13 +46,23 @@ const commentFilterFunction = (comment: Comment, filterString: string) => {
 }
 
 export default function Home() {
+    const {query, isReady, push} = useRouter()
     const {hnData, loading, error} = useHnData()
-    const [commentFilters, setCommentFilters] = useImmer<{ filterString: string, uuid: string, sourcesUsed: Record<HnDataSource, boolean> }[]>([{
+    const firstFilter = {
         uuid: '0',
         filterString: '',
         sourcesUsed: {hiring: true, looking: true, freelancerLooking: false, hiringFreelancer: false}
-    }])
+    }
+    const [commentFilters, setCommentFilters] = useImmer<{ filterString: string, uuid: string, sourcesUsed: Record<HnDataSource, boolean> }[]>([firstFilter])
     const [zoomOptions, setZoomOptions] = useState({})
+
+    useEffect(() => {
+        if (isReady) {
+            const decodedQueryString = base64url.decode(query.q as string)
+            const parsedQueryString = JSON.parse(decodedQueryString)
+            setCommentFilters(() => parsedQueryString)
+        }
+    }, [isReady])
 
     useEffect(() => {
         async function loadZoomPlugin() {
@@ -77,6 +89,14 @@ export default function Home() {
 
         loadZoomPlugin()
     }, [])
+
+    useEffect(() => {
+        if (isReady) {
+            const encodedQueryString = base64url.encode(JSON.stringify(commentFilters))
+            push(`/?q=${encodedQueryString}`)
+        }
+    }, [commentFilters, isReady])
+
 
     if (!hnData) {
         return <div>Loading...</div>

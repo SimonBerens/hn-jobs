@@ -19,6 +19,7 @@
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "@uiw/react-watermark": "^0.0.5",
+    "base64url": "^3.0.1",
     "chart.js": "^4.2.1",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-zoom": "^2.0.0",
