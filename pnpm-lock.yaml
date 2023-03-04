@@ -10,6 +10,7 @@ specifiers:
   '@types/node': 18.14.5
   '@types/react': 18.0.28
   '@types/react-dom': 18.0.11
+  '@uiw/react-watermark': ^0.0.5
   autoprefixer: ^10.4.13
   chart.js: ^4.2.1
   chartjs-adapter-date-fns: ^3.0.0
@@ -43,6 +44,7 @@ dependencies:
   '@types/node': 18.14.5
   '@types/react': 18.0.28
   '@types/react-dom': 18.0.11
+  '@uiw/react-watermark': 0.0.5_biqbaboplfbrettd7655fr4n2y
   chart.js: 4.2.1
   chartjs-adapter-date-fns: 3.0.0_rid3rx6orfiwps7kg2r43n6mvu
   chartjs-plugin-zoom: 2.0.0_chart.js@4.2.1
@@ -1378,6 +1380,21 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.54.0
       eslint-visitor-keys: 3.3.0
+    dev: false
+
+  /@uiw/react-watermark/0.0.5_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-F1JSV0kHbs0zLVRcGxhpO357dWkM4RVZaIHuyz5V+1BV8VAr23+e/7CvNyIRi9uz4RLkHeAopf6Ko3iLawOExw==}
+    peerDependencies:
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
+    dependencies:
+      '@uiw/watermark.js': 0.0.5
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@uiw/watermark.js/0.0.5:
+    resolution: {integrity: sha512-M0U5Dut8NZxWMXwc6npxt2IpYgnwj7EO9yo0cji+AfSS3XuovH9mPzL+fHj+QPjCfJFNexCHTOoCsOBdcyLQDg==}
     dev: false
 
   /acorn-jsx/5.3.2_acorn@8.8.2:

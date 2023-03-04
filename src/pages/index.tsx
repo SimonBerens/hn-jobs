@@ -23,6 +23,8 @@ import {recordToEntries} from "@/util";
 import {RemoveFilterButton} from "@/components/RemoveFilterButton";
 import {AddFilterButton} from "@/components/AddFilterButton";
 import chroma from "chroma-js";
+import Watermark from '@uiw/react-watermark';
+
 
 ChartJS.register(
     PointElement,
@@ -141,9 +143,9 @@ export default function Home() {
 
     return <div className="flex flex-col h-[800px]">
         <Header/>
-        <div className="w-full flex-1">
+        <Watermark className="w-full flex-1" content="hnhiringtrends.com" gapX={300} gapY={500}>
             <Line data={data} options={options}/>
-        </div>
+        </Watermark>
         <div className="flex flex-col-reverse sm:flex-row mt-6 sm:space-x-10 px-10">
             {commentFilters.map(({filterString, uuid, sourcesUsed}, filterIndex) =>
                 <div key={uuid} className="flex flex-col space-y-1">
