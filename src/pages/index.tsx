@@ -63,6 +63,9 @@ export default function Home() {
                         },
                         drag: {
                             enabled: true,
+                        },
+                        pinch: {
+                            enabled: true,
                         }
                     }
                 }
