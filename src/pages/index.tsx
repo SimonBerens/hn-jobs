@@ -121,7 +121,8 @@ export default function Home() {
             },
             y: {
                 title: {
-                    text: "Number of comments",
+                    display: true,
+                    text: "Number of top level comments"
                 }
             }
         },
