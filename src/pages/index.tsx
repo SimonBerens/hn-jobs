@@ -146,6 +146,7 @@ export default function Home() {
             data: movingAverageFromRight(datasets[i].data, 6),
             borderColor: chroma(borderColor).brighten(2).hex(),
             pointStyle: false,
+            label: 'to hide'
         })
     }
 
@@ -176,6 +177,11 @@ export default function Home() {
         },
         plugins: {
             ...zoomOptions,
+            legend: {
+                labels: {
+                    filter: item => item.text !== 'to hide'
+                }
+            }
         },
         onClick: (event, elements) => {
             if (elements.length > 0) {
