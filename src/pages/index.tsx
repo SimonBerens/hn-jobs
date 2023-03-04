@@ -1,11 +1,11 @@
 import {useEffect, useState} from "react";
 import {
     Chart as ChartJS,
-    ChartData,
+    ChartData, ChartDataset,
     ChartOptions,
     Legend,
     LinearScale,
-    LineElement,
+    LineElement, Point,
     PointElement,
     TimeScale,
     Title,
@@ -44,6 +44,22 @@ const commentFilterFunction = (comment: Comment, filterString: string) => {
         return true
     }
     return comment.text.toLowerCase().includes(filterString.toLowerCase())
+}
+
+function movingAverageFromRight(data: { x: number, y: number }[], windowSize: number) {
+    const result: { x: number, y: number }[] = []
+    let sum = 0
+    for (let i = 0; i < data.length; i++) {
+        sum += data[i].y
+        if (i - windowSize >=0) {
+            sum -= data[i - windowSize].y
+        }
+        result.push({
+            x: data[i].x,
+            y: sum / Math.min(windowSize, i + 1)
+        })
+    }
+    return result
 }
 
 export default function Home() {
@@ -103,7 +119,7 @@ export default function Home() {
         return <div>Loading...</div>
     }
 
-    const datasets = commentFilters.flatMap(({filterString, sourcesUsed}, filterIndex) =>
+    const datasets:  ChartDataset<"line", Point[]>[] = commentFilters.flatMap(({filterString, sourcesUsed}, filterIndex) =>
         recordToEntries(hnData)
             .filter(([key,]) => sourcesUsed[key])
             .map(
@@ -121,6 +137,17 @@ export default function Home() {
                 })
             )
     )
+
+    const l = datasets.length
+    for (let i = 0; i < l; i++) {
+        const borderColor = datasets[i].borderColor as string
+        datasets.push({
+            ...datasets[i],
+            data: movingAverageFromRight(datasets[i].data, 6),
+            borderColor: chroma(borderColor).brighten(2).hex(),
+            pointStyle: false,
+        })
+    }
 
     const data: ChartData<'line'> = {
         labels: getAllTimeLabels(hnData.hiring),
@@ -168,20 +195,21 @@ export default function Home() {
         <Watermark className="w-full flex-1" content="hnhiringtrends.com" gapX={300} gapY={500}>
             <Line data={data} options={options}/>
         </Watermark>
-        <Loading loading={loading} />
+        <Loading loading={loading}/>
         <div className="flex flex-col-reverse sm:flex-row mt-6 sm:space-x-10 px-10">
             {commentFilters.map(({filterString, uuid, sourcesUsed}, filterIndex) =>
                 <div key={uuid} className="flex flex-col space-y-1">
                     <RemoveFilterButton onClick={() => setCommentFilters(draft => {
                         draft.splice(filterIndex, 1)
                     })}/>
-                    <DebounceInput className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                   type="text"
-                                   value={filterString}
-                                   placeholder={"Filter comments by text"}
-                                   onChange={event => setCommentFilters(draft => {
-                                       draft[filterIndex].filterString = event.target.value
-                                   })}/>
+                    <DebounceInput
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        type="text"
+                        value={filterString}
+                        placeholder={"Filter comments by text"}
+                        onChange={event => setCommentFilters(draft => {
+                            draft[filterIndex].filterString = event.target.value
+                        })}/>
                     {HnDataSources.map(source =>
                         <div key={uuid + source} className="flex flex-row ml-1 items-center">
                             <input id={uuid + source + 'checkbox'}
