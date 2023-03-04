@@ -14,6 +14,8 @@ export default async function handler(
 
     try {
         const { authorization } = request.headers
+        console.log(authorization)
+        console.log(`Bearer ${process.env.CRON_TRIGGER_TOKEN}`)
 
         if (authorization !== `Bearer ${process.env.CRON_TRIGGER_TOKEN}`) {
             response.status(401).end("Unauthorized")
