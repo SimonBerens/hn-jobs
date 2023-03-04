@@ -46,7 +46,7 @@ export async function getRawHiringData() {
     return await fetch("http://hn.algolia.com/api/v1/search_by_date?tags=author_whoishiring,story&hitsPerPage=10000").then(res => res.json())
 }
 
-export async function getPostIds(source: HnDataSource, hiringJson: any): Promise<number[]> {
+export function getPostIds(source: HnDataSource, hiringJson: any): number[] {
     return hiringJson.hits
         .filter((post: any) => filterMap[source].titleFiler(post.title))
         .map((post: any) => post.objectID)
@@ -92,7 +92,8 @@ async function getPostDataSlowly(postIds: number[], source: HnDataSource): Promi
 export async function generateHnData(): Promise<HnData> {
     const hiringJson = await getRawHiringData()
     return entriesToRecord(await Promise.all(HnDataSources.map(async (source) => {
-        const postIds = await getPostIds(source, hiringJson)
+        const postIds = getPostIds(source, hiringJson)
+        console.log(`Found ${postIds.length} posts for ${source}...`)
         const postComments = await getPostDataSlowly(postIds, source)
         return [source, postComments]
     })))
