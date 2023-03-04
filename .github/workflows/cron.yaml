@@ -1,0 +1,17 @@
+name: parse-comments
+on:
+  schedule:
+    - cron: '0 */12 * * *'
+  workflow_dispatch:
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    environment: Production
+    env:
+      CRON_TRIGGER_TOKEN: ${{ secrets.CRON_TRIGGER_TOKEN }}
+    steps:
+      - name: Call the cron service
+        run: |
+          curl --request POST \
+          --url 'https://www.hnhiringtrends.com/api/cron' \
+          --header "Authorization: Bearer $CRON_TRIGGER_TOKEN"
