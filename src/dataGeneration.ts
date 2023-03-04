@@ -50,7 +50,7 @@ export async function getPostDatum(postId: number, source: HnDataSource, useCach
         postData = JSON.parse(raw)
     } else {
         postData = await fetch(`https://hn.algolia.com/api/v1/items/${postId}`).then(res => res.json());
-        await fs.writeFile(`cachedPosts/${postId}-${source}.json`, JSON.stringify(postData), {flag: "w"})
+        await fs.writeFile(`cachedPosts/${postId}-${source}.json`, JSON.stringify(postData), {flag: "wx"})
     }
     const topLevelComments: Comment[] = postData.children.filter((comment: any) => comment.text !== null)
         .map((comment: any) => ({
