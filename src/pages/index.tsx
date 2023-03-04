@@ -26,6 +26,7 @@ import chroma from "chroma-js";
 import Watermark from '@uiw/react-watermark';
 import {useRouter} from "next/router";
 import base64url from "base64url";
+import {Loading} from "@/components/Loading";
 
 
 ChartJS.register(
@@ -167,6 +168,7 @@ export default function Home() {
         <Watermark className="w-full flex-1" content="hnhiringtrends.com" gapX={300} gapY={500}>
             <Line data={data} options={options}/>
         </Watermark>
+        <Loading loading={loading} />
         <div className="flex flex-col-reverse sm:flex-row mt-6 sm:space-x-10 px-10">
             {commentFilters.map(({filterString, uuid, sourcesUsed}, filterIndex) =>
                 <div key={uuid} className="flex flex-col space-y-1">
