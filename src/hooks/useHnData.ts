@@ -3,13 +3,13 @@ import {HnData} from "@/hnData";
 
 type LoadingState = "loadingSmallData" | "loadingFullData" | "done"
 
+const smallDataUrl = `https://${process.env.NEXT_PUBLIC_CF_DATA_SUBDOMAIN}.hnhiringtrends.com/small-data.json`
+const fullDataUrl = `https://${process.env.NEXT_PUBLIC_CF_DATA_SUBDOMAIN}.hnhiringtrends.com/full-data.json`
+
 export function useHnData() {
     const [chartData, setChartData] = useState<HnData | null>(null)
     const [loading, setLoading] = useState<LoadingState>("loadingSmallData")
     const [error, setError] = useState<Error | null>(null)
-
-    const smallDataUrl = `https://${process.env.NEXT_PUBLIC_CF_DATA_SUBDOMAIN}.hnhiringtrends.com/small-data.json`
-    const fullDataUrl = `https://${process.env.NEXT_PUBLIC_CF_DATA_SUBDOMAIN}.hnhiringtrends.com/full-data.json`
 
     useEffect(() => {
         async function fetchChartData() {
