@@ -2,7 +2,7 @@
 
 ## About
 Every month, the [whoishiring](https://news.ycombinator.com/user?id=whoishiring) bot on HackerNews asks for people and companies to share if they're looking for jobs or hiring.
-This site scrapes the comments from those posts and displays the number of top level comments por post.
+This site scrapes the comments from those posts and displays the number of top level comments per post.
 
 You can hover over the data points to see the exact number of top level comments, or you can click on the datapoints to go to the original post.
 
@@ -31,8 +31,6 @@ CF_ACCOUNT_ID
 CF_BUCKET
 CF_SECRET_ACCESS_KEY
 NEXT_PUBLIC_CF_DATA_SUBDOMAIN
-# Cron Bearer Auth Token
-CRON_TRIGGER_TOKEN
 # Local dev config
 USE_CACHED_POSTS
 WRITE_CACHED_POSTS
