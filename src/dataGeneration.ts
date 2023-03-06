@@ -1,5 +1,5 @@
 import {parse} from "node-html-parser";
-import {entriesToRecord, recordToEntries, sleep} from "@/util";
+import {entriesToRecord, mapRecordValues, sleep} from "@/util";
 import {Comment, HnData, HnDataSource, HnDataSources, PostData} from "@/hnData";
 import {promises as fs} from "fs"
 
@@ -103,9 +103,5 @@ export function removeCommentsFromPost(post: PostData): PostData {
 }
 
 export function removeCommentsFromHnData(chartData: HnData): HnData {
-    return entriesToRecord(
-        recordToEntries(chartData).map(
-            ([key, value]) => [key, value.map(removeCommentsFromPost)]
-        )
-    )
+    return mapRecordValues(chartData, posts => posts.map(removeCommentsFromPost))
 }
