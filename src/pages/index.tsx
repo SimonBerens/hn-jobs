@@ -197,7 +197,7 @@ export default function Home() {
         <Loading loading={loading}/>
         <div className="flex flex-col-reverse sm:flex-row mt-6 sm:space-x-10 px-10">
             {commentFilters.map(({filterString, uuid, source}, filterIndex) =>
-                <div key={uuid} className="flex flex-col space-y-1">
+                <div key={uuid} className="flex flex-col space-y-2 mb-10">
                     <RemoveFilterButton onClick={() => setCommentFilters(draft => {
                         draft.splice(filterIndex, 1)
                     })}/>
