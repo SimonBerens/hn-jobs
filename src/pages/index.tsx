@@ -18,12 +18,11 @@ import {Line} from 'react-chartjs-2';
 import {Comment, getAllTimeLabels, HnDataSource, HnDataSources} from "@/hnData";
 import {Header} from "@/components/Header";
 import {useHnData} from "@/hooks/useHnData";
-import {ChartConfig} from "@/chartConfig";
+import {ChartColors, ChartConfig} from "@/chartConfig";
 import "chartjs-adapter-date-fns"
 import {DebounceInput} from "react-debounce-input";
 import {RemoveFilterButton} from "@/components/RemoveFilterButton";
 import {AddFilterButton} from "@/components/AddFilterButton";
-import chroma from "chroma-js";
 import Watermark from '@uiw/react-watermark';
 import {Loading} from "@/components/Loading";
 import {useRouterQueryState} from "@/hooks/useRouterQueryState";
@@ -114,7 +113,8 @@ export default function Home() {
         ({
             ...ChartConfig[source],
             ...(filterString && {label: `${ChartConfig[source].label} (${filterString})`}),
-            borderColor: chroma(ChartConfig[source].borderColor).darken(filterIndex / commentFilters.length * 3).hex(),
+            borderColor: ChartColors[filterIndex],
+            backgroundColor: ChartColors[filterIndex] + "40",
             tension: 0.2,
             data: hnData[source].map(post => ({
                 x: post.timestampMs,
@@ -216,14 +216,17 @@ export default function Home() {
                     }} options={entriesToRecord(HnDataSources.map(source => [source, ChartConfig[source].label]))}/>
                 </div>
             )}
-            <AddFilterButton
-                onClick={() => setCommentFilters(draft => {
-                    draft.push({
-                        uuid: crypto.randomUUID(),
-                        filterString: '',
-                        source: 'hiring',
-                    })
-                })}/>
+            {datasets.length / 2 < ChartColors.length &&
+                <AddFilterButton
+                    onClick={() => setCommentFilters(draft => {
+                        draft.push({
+                            uuid: crypto.randomUUID(),
+                            filterString: '',
+                            source: 'hiring',
+                        })
+                    })}/>
+            }
+
         </div>
     </div>
 }

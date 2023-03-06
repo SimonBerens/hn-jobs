@@ -17,7 +17,6 @@ specifiers:
   chart.js: ^4.2.1
   chartjs-adapter-date-fns: ^3.0.0
   chartjs-plugin-zoom: ^2.0.0
-  chroma-js: ^2.4.2
   classnames: ^2.3.2
   date-fns: ^2.29.3
   eslint: 8.35.0
@@ -53,7 +52,6 @@ dependencies:
   chart.js: 4.2.1
   chartjs-adapter-date-fns: 3.0.0_rid3rx6orfiwps7kg2r43n6mvu
   chartjs-plugin-zoom: 2.0.0_chart.js@4.2.1
-  chroma-js: 2.4.2
   classnames: 2.3.2
   date-fns: 2.29.3
   eslint: 8.35.0
@@ -1690,10 +1688,6 @@ packages:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.2
-
-  /chroma-js/2.4.2:
-    resolution: {integrity: sha512-U9eDw6+wt7V8z5NncY2jJfZa+hUH8XEj8FQHgFJTrUFnJfXYf4Ml4adI2vXZOjqRDpFWtYVWypDfZwnJ+HIR4A==}
-    dev: false
 
   /classnames/2.3.2:
     resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}

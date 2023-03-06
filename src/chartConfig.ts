@@ -2,30 +2,30 @@ import {HnDataSource} from "@/hnData";
 
 interface ConfigData {
     label: string,
-    backgroundColor: string,
-    borderColor: string,
 
 }
 
 export const ChartConfig: Record<HnDataSource, ConfigData> = {
     hiring: {
         label: "Hiring",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderColor: "rgba(255, 99, 132, 1)",
     },
     looking: {
         label: "Looking",
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderColor: "rgba(54, 162, 235, 1)",
     },
     freelancerLooking: {
         label: "Freelancer Looking",
-        backgroundColor: "rgba(255, 206, 86, 0.2)",
-        borderColor: "rgba(255, 206, 86, 1)",
     },
     hiringFreelancer: {
         label: "Hiring Freelancer",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderColor: "rgba(75, 192, 192, 1)",
     }
 }
+
+export const ChartColors = [
+    "#CA472F",
+    "#0B84A5",
+    "#F6C85F",
+    "#6F4E7C",
+    "#9DD866",
+    "#FFA056",
+    "#8DDDD0",
+]
