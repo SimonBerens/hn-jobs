@@ -56,17 +56,17 @@ export function AboutModal({ open, setOpen }: AboutModalProps) {
                                         </Dialog.Title>
                                         <div className="mt-2">
                                             <p className="text-sm text-gray-500">
-                                                Every month, the <a href="https://news.ycombinator.com/user?id=whoishiring" className="underline decoration-2">whoishiring</a> bot on HackerNews asks for people and companies to share if they're looking for jobs or hiring.
-                                                This site scrapes the comments from those posts and displays the number of top level comments por post.
+                                                Every month, the <a href="https://news.ycombinator.com/user?id=whoishiring" className="underline decoration-2">whoishiring</a> bot on HackerNews asks for people and companies to share if they&lsquo;re looking for jobs or hiring.
+                                                This site scrapes the comments from those posts and displays the number of top level comments per post.
                                                 <br/>
                                                 <br/>
                                                 You can hover over the data points to see the exact number of top level comments, or you can click on the datapoints to go to the original post.
                                                 <br/>
                                                 <br/>
-                                                You can filter the comments by keywords such as "remote", "senior", or "nyc".
+                                                You can filter the comments by keywords such as &quot;remote&quot;, &quot;senior&quot;, or &quot;nyc&quot;.
                                                 <br/>
                                                 <br/>
-                                                Adding multiple filters lets you compare trends between keywords. For example, you can compare the number of "sf" and "nyc" job postings.
+                                                Adding multiple filters lets you compare trends between keywords. For example, you can compare the number of &quot;sf&quot; and &quot;nyc&quot; job postings.
                                                 <br/>
                                                 <br/>
                                                 Your filters are synced with the url, so if you want to share a specific view, you can just copy the url!

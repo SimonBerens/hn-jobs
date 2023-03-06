@@ -20,13 +20,13 @@ export function useRouterQueryState<T>(initialValue: T, queryKey: string) {
             }
             return true
         })
-    }, [setValue, initialValue, queryKey])
+    }, [setValue, initialValue, queryKey, beforePopState])
 
     useEffect(() => {
         if (isReady && query[queryKey] !== undefined) {
             setValue(JSON.parse(base64url.decode(query[queryKey] as string)))
         }
-    }, [isReady, queryKey, setValue])
+    }, [isReady, query, queryKey, setValue])
 
     function updateValue(updateFunction: DraftFunction<T>) {
         setValue(updateFunction)
