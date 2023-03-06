@@ -121,15 +121,14 @@ export default function Home() {
             )
     )
 
-    const l = datasets.length
-    for (let i = 0; i < l; i++) {
-        const borderColor = datasets[i].borderColor as string
+    const originalDatasetsLength = datasets.length
+    for (let i = 0; i < originalDatasetsLength; i++) {
         datasets.push({
             ...datasets[i],
             data: movingAverageFromRight(datasets[i].data, 6),
-            borderColor: chroma(borderColor).brighten(2).hex(),
+            borderColor: "#00000010",
             pointStyle: false,
-            label: 'to hide'
+            label: ''
         })
     }
 
@@ -162,8 +161,11 @@ export default function Home() {
             ...zoomOptions,
             legend: {
                 labels: {
-                    filter: item => item.text !== 'to hide'
+                    filter: item => item.text !== ''
                 }
+            },
+            tooltip: {
+                filter: item => item.datasetIndex < originalDatasetsLength,
             }
         },
         onClick: (event, elements) => {
@@ -174,7 +176,8 @@ export default function Home() {
             }
         },
         onHover: (event, elements) => {
-            document.querySelector('body')!.style.cursor = elements.length > 0 ? "pointer" : "default"
+            const shouldShowPointer = elements.length > 0 && elements[0].datasetIndex < originalDatasetsLength
+            document.querySelector('body')!.style.cursor = shouldShowPointer ? "pointer" : "default"
         }
     }
 
