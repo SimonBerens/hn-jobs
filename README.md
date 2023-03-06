@@ -1,8 +1,16 @@
 # [HN Hiring Trends](https://www.hnhiringtrends.com)
 
 ## About
-This is a interactive visualization of all the top level comments from the
-[whoishiring](https://news.ycombinator.com/user?id=whoishiring) threads. 
+Every month, the [whoishiring](https://news.ycombinator.com/user?id=whoishiring) bot on HackerNews asks for people and companies to share if they're looking for jobs or hiring.
+This site scrapes the comments from those posts and displays the number of top level comments por post.
+
+You can hover over the data points to see the exact number of top level comments, or you can click on the datapoints to go to the original post.
+
+You can filter the comments by keywords such as "remote", "senior", or "nyc".
+
+Adding multiple filters lets you compare trends between keywords. For example, you can compare the number of "sf" and "nyc" job postings.
+
+Your filters are synced with the url, so if you want to share a specific view, you can just copy the url!
 
 ## Architecture
 The frontend is a static next.js site that is deployed to Vercel.
