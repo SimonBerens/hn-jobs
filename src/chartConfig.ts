@@ -1,4 +1,4 @@
-import {HnData} from "@/hnData";
+import {HnDataSource} from "@/hnData";
 
 interface ConfigData {
     label: string,
@@ -7,7 +7,7 @@ interface ConfigData {
 
 }
 
-export const ChartConfig: Record<keyof HnData, ConfigData> = {
+export const ChartConfig: Record<HnDataSource, ConfigData> = {
     hiring: {
         label: "Hiring",
         backgroundColor: "rgba(255, 99, 132, 0.2)",

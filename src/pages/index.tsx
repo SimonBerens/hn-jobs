@@ -21,13 +21,13 @@ import {useHnData} from "@/hooks/useHnData";
 import {ChartConfig} from "@/chartConfig";
 import "chartjs-adapter-date-fns"
 import {DebounceInput} from "react-debounce-input";
-import {recordToEntries} from "@/util";
 import {RemoveFilterButton} from "@/components/RemoveFilterButton";
 import {AddFilterButton} from "@/components/AddFilterButton";
 import chroma from "chroma-js";
 import Watermark from '@uiw/react-watermark';
 import {Loading} from "@/components/Loading";
 import {useRouterQueryState} from "@/hooks/useRouterQueryState";
+import {SelectInput} from "@/components/SelectInput";
 
 
 ChartJS.register(
@@ -52,7 +52,7 @@ function movingAverageFromRight(data: { x: number, y: number }[], windowSize: nu
     let sum = 0
     for (let i = 0; i < data.length; i++) {
         sum += data[i].y
-        if (i - windowSize >=0) {
+        if (i - windowSize >= 0) {
             sum -= data[i - windowSize].y
         }
         result.push({
@@ -65,12 +65,18 @@ function movingAverageFromRight(data: { x: number, y: number }[], windowSize: nu
 
 export default function Home() {
     const {hnData, loading, error} = useHnData()
-    const firstFilter = {
-        uuid: '0',
-        filterString: '',
-        sourcesUsed: {hiring: true, looking: true, freelancerLooking: false, hiringFreelancer: false}
-    }
-    const [commentFilters, setCommentFilters] = useRouterQueryState<{ filterString: string, uuid: string, sourcesUsed: Record<HnDataSource, boolean> }[]>([firstFilter], 'q')
+    const [commentFilters, setCommentFilters] = useRouterQueryState<{ filterString: string, uuid: string, source: HnDataSource }[]>(
+        [{
+            uuid: '0',
+            filterString: '',
+            source: 'hiring',
+        },
+            {
+                uuid: '0',
+                filterString: '',
+                source: 'looking',
+            }
+        ], 'q')
     const [zoomOptions, setZoomOptions] = useState({})
 
     useEffect(() => {
@@ -103,23 +109,19 @@ export default function Home() {
         return <div>Loading...</div>
     }
 
-    const datasets:  ChartDataset<"line", Point[]>[] = commentFilters.flatMap(({filterString, sourcesUsed}, filterIndex) =>
-        recordToEntries(hnData)
-            .filter(([key,]) => sourcesUsed[key])
-            .map(
-                ([key, value]) => ({
-                    ...ChartConfig[key],
-                    ...(filterString && {label: `${ChartConfig[key].label} (${filterString})`}),
-                    borderColor: chroma(ChartConfig[key].borderColor).darken(filterIndex / commentFilters.length * 3).hex(),
-                    tension: 0.2,
-                    data: value.map(post => ({
-                        x: post.timestampMs,
-                        y: loading === 'done' ?
-                            post.topLevelComments.filter(comment => commentFilterFunction(comment, filterString)).length
-                            : post.numTopLevelComments
-                    }))
-                })
-            )
+    const datasets: ChartDataset<"line", Point[]>[] = commentFilters.map(({filterString, source}, filterIndex) =>
+        ({
+            ...ChartConfig[source],
+            ...(filterString && {label: `${ChartConfig[source].label} (${filterString})`}),
+            borderColor: chroma(ChartConfig[source].borderColor).darken(filterIndex / commentFilters.length * 3).hex(),
+            tension: 0.2,
+            data: hnData[source].map(post => ({
+                x: post.timestampMs,
+                y: loading === 'done' ?
+                    post.topLevelComments.filter(comment => commentFilterFunction(comment, filterString)).length
+                    : post.numTopLevelComments
+            }))
+        })
     )
 
     const originalDatasetsLength = datasets.length
@@ -193,7 +195,7 @@ export default function Home() {
         </Watermark>
         <Loading loading={loading}/>
         <div className="flex flex-col-reverse sm:flex-row mt-6 sm:space-x-10 px-10">
-            {commentFilters.map(({filterString, uuid, sourcesUsed}, filterIndex) =>
+            {commentFilters.map(({filterString, uuid, source}, filterIndex) =>
                 <div key={uuid} className="flex flex-col space-y-1">
                     <RemoveFilterButton onClick={() => setCommentFilters(draft => {
                         draft.splice(filterIndex, 1)
@@ -206,19 +208,11 @@ export default function Home() {
                         onChange={event => setCommentFilters(draft => {
                             draft[filterIndex].filterString = event.target.value
                         })}/>
-                    {HnDataSources.map(source =>
-                        <div key={uuid + source} className="flex flex-row ml-1 items-center">
-                            <input id={uuid + source + 'checkbox'}
-                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                   type="checkbox" checked={sourcesUsed[source]}
-                                   onChange={() => setCommentFilters(draft => {
-                                       draft[filterIndex].sourcesUsed[source] = !draft[filterIndex].sourcesUsed[source]
-                                   })}/>
-                            <label className="ml-2" htmlFor={uuid + source + 'checkbox'}>
-                                {ChartConfig[source].label}
-                            </label>
-                        </div>
-                    )}
+                    <SelectInput selected={source} setSelected={newSelected => {
+                        setCommentFilters(draft => {
+                            draft[filterIndex].source = newSelected
+                        })
+                    }} options={HnDataSources}/>
                 </div>
             )}
             <AddFilterButton
@@ -226,7 +220,7 @@ export default function Home() {
                     draft.push({
                         uuid: crypto.randomUUID(),
                         filterString: '',
-                        sourcesUsed: {hiring: true, looking: true, freelancerLooking: false, hiringFreelancer: false}
+                        source: 'hiring',
                     })
                 })}/>
         </div>
