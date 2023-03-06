@@ -65,7 +65,7 @@ function movingAverageFromRight(data: { x: number, y: number }[], windowSize: nu
 
 export default function Home() {
     const {hnData, loading, error} = useHnData()
-    const [commentFilters, setCommentFilters] = useRouterQueryState<{ filterString: string, uuid: string, source: HnDataSource }[]>(
+    const [searches, setSearches] = useRouterQueryState<{ filterString: string, uuid: string, source: HnDataSource }[]>(
         [{
             uuid: '0',
             filterString: '',
@@ -109,7 +109,7 @@ export default function Home() {
         return <div>Loading...</div>
     }
 
-    const datasets: ChartDataset<"line", Point[]>[] = commentFilters.map(({filterString, source}, filterIndex) =>
+    const datasets: ChartDataset<"line", Point[]>[] = searches.map(({filterString, source}, filterIndex) =>
         ({
             ...ChartConfig[source],
             ...(filterString && {label: `${ChartConfig[source].label} (${filterString})`}),
@@ -180,7 +180,7 @@ export default function Home() {
             if (areValidElements(elements)) {
                 const datasetIndex = elements[0].datasetIndex
                 const index = elements[0].index
-                window.open(hnData[HnDataSources[datasetIndex]][index].url, "_blank")
+                window.open(hnData[searches[datasetIndex].source][index].url, "_blank")
             }
         },
         onHover: (event, elements) => {
@@ -196,9 +196,9 @@ export default function Home() {
         </Watermark>
         <Loading loading={loading}/>
         <div className="flex flex-col-reverse sm:flex-row mt-6 sm:space-x-10 px-10">
-            {commentFilters.map(({filterString, uuid, source}, filterIndex) =>
+            {searches.map(({filterString, uuid, source}, filterIndex) =>
                 <div key={uuid} className="flex flex-col space-y-2 mb-10">
-                    <RemoveSearchButton onClick={() => setCommentFilters(draft => {
+                    <RemoveSearchButton onClick={() => setSearches(draft => {
                         draft.splice(filterIndex, 1)
                     })}/>
                     <DebounceInput
@@ -206,11 +206,11 @@ export default function Home() {
                         type="text"
                         value={filterString}
                         placeholder={"Filter comments by text"}
-                        onChange={event => setCommentFilters(draft => {
+                        onChange={event => setSearches(draft => {
                             draft[filterIndex].filterString = event.target.value
                         })}/>
                     <SelectInput selected={source} setSelected={newSelected => {
-                        setCommentFilters(draft => {
+                        setSearches(draft => {
                             draft[filterIndex].source = newSelected
                         })
                     }} options={entriesToRecord(HnDataSources.map(source => [source, ChartConfig[source].label]))}/>
@@ -218,7 +218,7 @@ export default function Home() {
             )}
             {datasets.length / 2 < ChartColors.length &&
                 <AddSearchButton
-                    onClick={() => setCommentFilters(draft => {
+                    onClick={() => setSearches(draft => {
                         draft.push({
                             uuid: crypto.randomUUID(),
                             filterString: '',
