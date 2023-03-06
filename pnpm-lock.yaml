@@ -4,6 +4,7 @@ specifiers:
   '@aws-sdk/abort-controller': ^3.272.0
   '@aws-sdk/client-s3': ^3.282.0
   '@aws-sdk/lib-storage': ^3.282.0
+  '@headlessui/react': ^1.7.13
   '@tailwindcss/forms': ^0.5.3
   '@types/chroma-js': ^2.4.0
   '@types/hammerjs': ^2.0.41
@@ -40,6 +41,7 @@ dependencies:
   '@aws-sdk/abort-controller': 3.272.0
   '@aws-sdk/client-s3': 3.282.0
   '@aws-sdk/lib-storage': 3.282.0_six2yogqsno52bn4by6roixts4
+  '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.2.7
   '@types/chroma-js': 2.4.0
   '@types/hammerjs': 2.0.41
@@ -1084,6 +1086,18 @@ packages:
   /@eslint/js/8.35.0:
     resolution: {integrity: sha512-JXdzbRiWclLVoD8sNUjR443VVlYqiYmDVT6rGUEIEHU5YJW0gaVZwV2xgM7D4arkvASqD0IlLUVjHiFuxaftRw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dev: false
+
+  /@headlessui/react/1.7.13_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-9n+EQKRtD9266xIHXdY5MfiXPDfYwl7zBM7KOx2Ae3Gdgxy8QML1FkCMjq6AsOf0l6N9uvI4HcFtuFlenaldKg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16 || ^17 || ^18
+      react-dom: ^16 || ^17 || ^18
+    dependencies:
+      client-only: 0.0.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@humanwhocodes/config-array/0.11.8:
