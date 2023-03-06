@@ -28,6 +28,7 @@ import Watermark from '@uiw/react-watermark';
 import {Loading} from "@/components/Loading";
 import {useRouterQueryState} from "@/hooks/useRouterQueryState";
 import {SelectInput} from "@/components/SelectInput";
+import {entriesToRecord} from "@/util";
 
 
 ChartJS.register(
@@ -212,7 +213,7 @@ export default function Home() {
                         setCommentFilters(draft => {
                             draft[filterIndex].source = newSelected
                         })
-                    }} options={HnDataSources}/>
+                    }} options={entriesToRecord(HnDataSources.map(source => [source, ChartConfig[source].label]))}/>
                 </div>
             )}
             <AddFilterButton
