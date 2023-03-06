@@ -6,24 +6,6 @@ export default async function handler(
     request: NextApiRequest,
     response: NextApiResponse
 ) {
-    if (request.method !== "POST") {
-        response.setHeader("Allow", "POST")
-        response.status(405).end("Method Not Allowed")
-        return
-    }
-
-    try {
-        const { authorization } = request.headers
-
-        if (authorization !== `Bearer ${process.env.CRON_TRIGGER_TOKEN}`) {
-            response.status(401).end("Unauthorized")
-            return
-        }
-    } catch (err) {
-        response.status(500).json({ statusCode: 500, message: (err as Error).message })
-        return
-    }
-    
     const fullData = await generateHnData()
     const smallData = removeCommentsFromHnData(fullData)
     try {
