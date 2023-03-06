@@ -1,11 +1,13 @@
 import {useEffect, useState} from "react";
 import {
     Chart as ChartJS,
-    ChartData, ChartDataset,
+    ChartData,
+    ChartDataset,
     ChartOptions,
     Legend,
     LinearScale,
-    LineElement, Point,
+    LineElement,
+    Point,
     PointElement,
     TimeScale,
     Title,
@@ -17,16 +19,14 @@ import {Header} from "@/components/Header";
 import {useHnData} from "@/hooks/useHnData";
 import {ChartConfig} from "@/chartConfig";
 import "chartjs-adapter-date-fns"
-import {useImmer} from "use-immer";
 import {DebounceInput} from "react-debounce-input";
 import {recordToEntries} from "@/util";
 import {RemoveFilterButton} from "@/components/RemoveFilterButton";
 import {AddFilterButton} from "@/components/AddFilterButton";
 import chroma from "chroma-js";
 import Watermark from '@uiw/react-watermark';
-import {useRouter} from "next/router";
-import base64url from "base64url";
 import {Loading} from "@/components/Loading";
+import {useRouterQueryState} from "@/hooks/useRouterQueryState";
 
 
 ChartJS.register(
@@ -63,23 +63,14 @@ function movingAverageFromRight(data: { x: number, y: number }[], windowSize: nu
 }
 
 export default function Home() {
-    const {query, isReady, push} = useRouter()
     const {hnData, loading, error} = useHnData()
     const firstFilter = {
         uuid: '0',
         filterString: '',
         sourcesUsed: {hiring: true, looking: true, freelancerLooking: false, hiringFreelancer: false}
     }
-    const [commentFilters, setCommentFilters] = useImmer<{ filterString: string, uuid: string, sourcesUsed: Record<HnDataSource, boolean> }[]>([firstFilter])
+    const [commentFilters, setCommentFilters] = useRouterQueryState<{ filterString: string, uuid: string, sourcesUsed: Record<HnDataSource, boolean> }[]>([firstFilter], 'q')
     const [zoomOptions, setZoomOptions] = useState({})
-
-    useEffect(() => {
-        if (isReady && query.q) {
-            const decodedQueryString = base64url.decode(query.q as string)
-            const parsedQueryString = JSON.parse(decodedQueryString)
-            setCommentFilters(() => parsedQueryString)
-        }
-    }, [isReady])
 
     useEffect(() => {
         async function loadZoomPlugin() {
@@ -106,14 +97,6 @@ export default function Home() {
 
         loadZoomPlugin()
     }, [])
-
-    useEffect(() => {
-        if (isReady) {
-            const encodedQueryString = base64url.encode(JSON.stringify(commentFilters))
-            push(`/?q=${encodedQueryString}`)
-        }
-    }, [commentFilters, isReady])
-
 
     if (!hnData) {
         return <div>Loading...</div>
