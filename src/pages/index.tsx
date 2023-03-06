@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {
+    ActiveElement,
     Chart as ChartJS,
     ChartData,
     ChartDataset,
@@ -137,6 +138,10 @@ export default function Home() {
         datasets,
     }
 
+    function areValidElements(elements: ActiveElement[]) {
+        return elements.length > 0 && elements[0].datasetIndex < originalDatasetsLength;
+    }
+
     const options: ChartOptions<'line'> = {
         maintainAspectRatio: false,
         scales: {
@@ -169,15 +174,14 @@ export default function Home() {
             }
         },
         onClick: (event, elements) => {
-            if (elements.length > 0) {
+            if (areValidElements(elements)) {
                 const datasetIndex = elements[0].datasetIndex
                 const index = elements[0].index
                 window.open(hnData[HnDataSources[datasetIndex]][index].url, "_blank")
             }
         },
         onHover: (event, elements) => {
-            const shouldShowPointer = elements.length > 0 && elements[0].datasetIndex < originalDatasetsLength
-            document.querySelector('body')!.style.cursor = shouldShowPointer ? "pointer" : "default"
+            document.querySelector('body')!.style.cursor = areValidElements(elements) ? "pointer" : "default"
         }
     }
 
