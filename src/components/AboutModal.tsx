@@ -66,10 +66,10 @@ export function AboutModal({ open, setOpen }: AboutModalProps) {
                                                 You can filter the comments by keywords such as &quot;remote&quot;, &quot;senior&quot;, or &quot;nyc&quot;.
                                                 <br/>
                                                 <br/>
-                                                Adding multiple filters lets you compare trends between keywords. For example, you can compare the number of &quot;sf&quot; and &quot;nyc&quot; job postings.
+                                                Adding multiple searches lets you compare trends between keywords. For example, you can compare the number of &quot;sf&quot; and &quot;nyc&quot; job postings.
                                                 <br/>
                                                 <br/>
-                                                Your filters are synced with the url, so if you want to share a specific view, you can just copy the url!
+                                                Your searches are synced with the url, so if you want to share a specific view, you can just copy the url!
                                                 <br/>
                                                 <br/>
                                                 If you found this tool useful, you can follow me on

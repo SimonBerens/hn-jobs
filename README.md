@@ -8,9 +8,9 @@ You can hover over the data points to see the exact number of top level comments
 
 You can filter the comments by keywords such as "remote", "senior", or "nyc".
 
-Adding multiple filters lets you compare trends between keywords. For example, you can compare the number of "sf" and "nyc" job postings.
+Adding multiple searches lets you compare trends between keywords. For example, you can compare the number of "sf" and "nyc" job postings.
 
-Your filters are synced with the url, so if you want to share a specific view, you can just copy the url!
+Your searches are synced with the url, so if you want to share a specific view, you can just copy the url!
 
 ## Architecture
 The frontend is a static next.js site that is deployed to Vercel.

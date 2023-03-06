@@ -21,8 +21,8 @@ import {useHnData} from "@/hooks/useHnData";
 import {ChartColors, ChartConfig} from "@/chartConfig";
 import "chartjs-adapter-date-fns"
 import {DebounceInput} from "react-debounce-input";
-import {RemoveFilterButton} from "@/components/RemoveFilterButton";
-import {AddFilterButton} from "@/components/AddFilterButton";
+import {RemoveSearchButton} from "@/components/RemoveSearchButton";
+import {AddSearchButton} from "@/components/AddSearchButton";
 import Watermark from '@uiw/react-watermark';
 import {Loading} from "@/components/Loading";
 import {useRouterQueryState} from "@/hooks/useRouterQueryState";
@@ -198,7 +198,7 @@ export default function Home() {
         <div className="flex flex-col-reverse sm:flex-row mt-6 sm:space-x-10 px-10">
             {commentFilters.map(({filterString, uuid, source}, filterIndex) =>
                 <div key={uuid} className="flex flex-col space-y-2 mb-10">
-                    <RemoveFilterButton onClick={() => setCommentFilters(draft => {
+                    <RemoveSearchButton onClick={() => setCommentFilters(draft => {
                         draft.splice(filterIndex, 1)
                     })}/>
                     <DebounceInput
@@ -217,7 +217,7 @@ export default function Home() {
                 </div>
             )}
             {datasets.length / 2 < ChartColors.length &&
-                <AddFilterButton
+                <AddSearchButton
                     onClick={() => setCommentFilters(draft => {
                         draft.push({
                             uuid: crypto.randomUUID(),
