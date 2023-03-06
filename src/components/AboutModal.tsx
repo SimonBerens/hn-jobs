@@ -63,7 +63,7 @@ export function AboutModal({ open, setOpen }: AboutModalProps) {
                                                 You can hover over the data points to see the exact number of top level comments, or you can click on the datapoints to go to the original post.
                                                 <br/>
                                                 <br/>
-                                                You can filter the comments by keywords such as &quot;remote&quot;, &quot;senior&quot;, or &quot;nyc&quot;.
+                                                You can filter the comments by keywords such as &quot;remote&quot;, &quot;senior&quot;, or &quot;nyc&quot;. Use commas to OR filters together (i.e. &quot;sf, san francisco&quot; will match comments that contain either &quot;sf&quot; OR &quot;san francisco&quot;.)
                                                 <br/>
                                                 <br/>
                                                 Adding multiple searches lets you compare trends between keywords. For example, you can compare the number of &quot;sf&quot; and &quot;nyc&quot; job postings.

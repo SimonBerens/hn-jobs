@@ -44,7 +44,9 @@ const commentFilterFunction = (comment: Comment, filterString: string) => {
     if (filterString === '') {
         return true
     }
-    return comment.text.toLowerCase().includes(filterString.toLowerCase())
+    return filterString.split(',').some(filter =>
+        comment.text.toLowerCase().includes(filter.toLowerCase().trim())
+    )
 }
 
 function movingAverageFromRight(data: { x: number, y: number }[], windowSize: number) {
@@ -195,17 +197,17 @@ export default function Home() {
             <Line data={data} options={options}/>
         </Watermark>
         <Loading loading={loading}/>
-        <div className="flex flex-col-reverse sm:flex-row mt-6 sm:space-x-10 px-10">
+        <div className="flex flex-col-reverse flex-wrap sm:flex-row mt-6 sm:space-x-10 px-10">
             {searches.map(({filterString, uuid, source}, filterIndex) =>
                 <div key={uuid} className="flex flex-col space-y-2 mb-10">
                     <RemoveSearchButton onClick={() => setSearches(draft => {
                         draft.splice(filterIndex, 1)
                     })}/>
-                    <DebounceInput
+                    <DebounceInput debounceTimeout={300}
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         type="text"
                         value={filterString}
-                        placeholder={"Filter comments by text"}
+                        placeholder="Filter comments by text"
                         onChange={event => setSearches(draft => {
                             draft[filterIndex].filterString = event.target.value
                         })}/>

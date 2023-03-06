@@ -6,7 +6,7 @@ This site scrapes the comments from those posts and displays the number of top l
 
 You can hover over the data points to see the exact number of top level comments, or you can click on the datapoints to go to the original post.
 
-You can filter the comments by keywords such as "remote", "senior", or "nyc".
+You can filter the comments by keywords such as "remote", "senior", or "nyc". Use commas to OR filters together (i.e. "sf, san francisco" will match comments that contain either "sf" OR "san francisco".)
 
 Adding multiple searches lets you compare trends between keywords. For example, you can compare the number of "sf" and "nyc" job postings.
 
