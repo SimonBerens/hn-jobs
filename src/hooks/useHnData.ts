@@ -15,13 +15,10 @@ export function useHnData() {
         async function fetchChartData() {
             try {
                 let smallDataJson = await fetch(smallDataUrl).then(res => res.json())
-                console.log(smallDataJson)
                 setChartData(smallDataJson)
                 setLoading("loadingFullData")
-                console.log("loading the big stuff 😉")
                 let fullDataJson = await fetch(fullDataUrl).then(res => res.json())
                 setChartData(fullDataJson)
-                console.log("the big stuff has been loaded 💦")
             } catch (e) {
                 setError(e as Error)
             }
