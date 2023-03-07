@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {
     ActiveElement,
     Chart as ChartJS,
@@ -23,11 +23,11 @@ import "chartjs-adapter-date-fns"
 import {DebounceInput} from "react-debounce-input";
 import {RemoveSearchButton} from "@/components/RemoveSearchButton";
 import {AddSearchButton} from "@/components/AddSearchButton";
-import {Loading} from "@/components/Loading";
 import {useRouterQueryState} from "@/hooks/useRouterQueryState";
 import {SelectInput} from "@/components/SelectInput";
 import {entriesToRecord} from "@/util";
 import {useWindowWidth} from "@react-hook/window-size/throttled";
+import {useLoadingText} from "@/hooks/useLoadingText";
 
 ChartJS.register(
     PointElement,
@@ -80,6 +80,7 @@ export default function Home() {
         ], 'q')
     const [zoomOptions, setZoomOptions] = useState({})
     const screenWidth = useWindowWidth()
+    const loadingPlaceholderText = useLoadingText()
 
     useEffect(() => {
         async function loadZoomPlugin() {
@@ -107,62 +108,72 @@ export default function Home() {
         loadZoomPlugin()
     }, [])
 
+
+    const data: ChartData<'line'> = useMemo(() => {
+
+        if (!hnData) {
+            return {
+                labels: [],
+                datasets: [],
+            }
+        }
+        function modifiedConfig(i: number, isMovingAverage: boolean) {
+
+            const isMobile = screenWidth < 640
+            const isPrimaryGraph = isMobile ? isMovingAverage : !isMovingAverage
+            const {filterString, source} = searches[i]
+            const labelText = filterString ? `${ChartConfig[source].label} (${filterString})` : ChartConfig[source].label
+            const label = isPrimaryGraph ? labelText : ''
+            if (isPrimaryGraph) {
+                return {
+                    label,
+                    borderColor: ChartColors[i],
+                    backgroundColor: ChartColors[i] + "40",
+                }
+            } else {
+                return {
+                    label,
+                    borderColor: "#00000010",
+                    backgroundColor: "#00000010",
+                }
+            }
+
+        }
+
+        const datasets: ChartDataset<"line", Point[]>[] = searches.map(({filterString, source}, filterIndex) =>
+            ({
+                ...modifiedConfig(filterIndex, false),
+                tension: 0.2,
+                data: hnData[source].map(post => ({
+                    x: post.timestampMs,
+                    y: loading === 'done' ?
+                        post.topLevelComments.filter(comment => commentFilterFunction(comment, filterString)).length
+                        : post.numTopLevelComments
+                }))
+            })
+        )
+
+        for (let i = 0; i < searches.length; i++) {
+            datasets.push({
+                ...modifiedConfig(i, true),
+                tension: 0.2,
+                data: movingAverageFromRight(datasets[i].data, 6),
+                pointStyle: false,
+            })
+        }
+
+        return {
+            labels: getAllTimeLabels(hnData.hiring),
+            datasets,
+        }
+    }, [hnData, searches, screenWidth])
+
     if (!hnData) {
         return <div>Loading...</div>
     }
 
-    function modifiedConfig(i: number, isMovingAverage: boolean) {
-        const isMobile = screenWidth < 640
-        const isPrimaryGraph =  isMobile ? isMovingAverage : !isMovingAverage
-        const {filterString, source} = searches[i]
-        const labelText = filterString ? `${ChartConfig[source].label} (${filterString})` : ChartConfig[source].label
-        const label =  isPrimaryGraph ? labelText : ''
-        if (isPrimaryGraph) {
-            return {
-                label,
-                borderColor: ChartColors[i],
-                backgroundColor: ChartColors[i] + "40",
-            }
-        } else {
-            return {
-                label,
-                borderColor: "#00000010",
-                backgroundColor: "#00000010",
-            }
-        }
-
-    }
-
-    const datasets: ChartDataset<"line", Point[]>[] = searches.map(({filterString, source}, filterIndex) =>
-        ({
-            ...modifiedConfig(filterIndex, false),
-            tension: 0.2,
-            data: hnData[source].map(post => ({
-                x: post.timestampMs,
-                y: loading === 'done' ?
-                    post.topLevelComments.filter(comment => commentFilterFunction(comment, filterString)).length
-                    : post.numTopLevelComments
-            }))
-        })
-    )
-
-    const originalDatasetsLength = datasets.length
-    for (let i = 0; i < originalDatasetsLength; i++) {
-        datasets.push({
-            ...modifiedConfig(i, true),
-            tension: 0.2,
-            data: movingAverageFromRight(datasets[i].data, 6),
-            pointStyle: false,
-        })
-    }
-
-    const data: ChartData<'line'> = {
-        labels: getAllTimeLabels(hnData.hiring),
-        datasets,
-    }
-
     function areValidElements(elements: ActiveElement[]) {
-        return elements.length > 0 && elements[0].datasetIndex < originalDatasetsLength;
+        return elements.length > 0 && elements[0].datasetIndex < searches.length;
     }
 
     const options: ChartOptions<'line'> = {
@@ -193,7 +204,7 @@ export default function Home() {
                 }
             },
             tooltip: {
-                filter: item => item.datasetIndex < originalDatasetsLength,
+                filter: item => item.datasetIndex < searches.length,
             }
         },
         onClick: (event, elements) => {
@@ -211,10 +222,9 @@ export default function Home() {
 
     return <div className="flex flex-col h-[800px]">
         <Header/>
-        <div className="w-full flex-1" >
+        <div className="w-full flex-1">
             <Line data={data} options={options}/>
         </div>
-        <Loading loading={loading}/>
         <div className="flex flex-col-reverse flex-wrap sm:flex-row mt-6 sm:space-x-10 px-10">
             {searches.map(({filterString, uuid, source}, filterIndex) =>
                 <div key={uuid} className="flex flex-col space-y-2 mb-10">
@@ -222,13 +232,14 @@ export default function Home() {
                         draft.splice(filterIndex, 1)
                     })}/>
                     <DebounceInput debounceTimeout={300}
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        type="text"
-                        value={filterString}
-                        placeholder="Filter comments by text"
-                        onChange={event => setSearches(draft => {
-                            draft[filterIndex].filterString = event.target.value
-                        })}/>
+                                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                   type="text"
+                                   value={filterString}
+                                   placeholder={loading !== 'done' ? loadingPlaceholderText : 'Filter comments by text'}
+                                   disabled={loading !== 'done'}
+                                   onChange={event => setSearches(draft => {
+                                       draft[filterIndex].filterString = event.target.value
+                                   })}/>
                     <SelectInput selected={source} setSelected={newSelected => {
                         setSearches(draft => {
                             draft[filterIndex].source = newSelected
@@ -236,7 +247,7 @@ export default function Home() {
                     }} options={entriesToRecord(HnDataSources.map(source => [source, ChartConfig[source].label]))}/>
                 </div>
             )}
-            {datasets.length / 2 < ChartColors.length &&
+            {searches.length < ChartColors.length &&
                 <AddSearchButton
                     onClick={() => setSearches(draft => {
                         draft.push({
