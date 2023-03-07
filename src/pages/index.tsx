@@ -23,7 +23,6 @@ import "chartjs-adapter-date-fns"
 import {DebounceInput} from "react-debounce-input";
 import {RemoveSearchButton} from "@/components/RemoveSearchButton";
 import {AddSearchButton} from "@/components/AddSearchButton";
-import Watermark from '@uiw/react-watermark';
 import {Loading} from "@/components/Loading";
 import {useRouterQueryState} from "@/hooks/useRouterQueryState";
 import {SelectInput} from "@/components/SelectInput";
@@ -212,9 +211,9 @@ export default function Home() {
 
     return <div className="flex flex-col h-[800px]">
         <Header/>
-        <Watermark className="w-full flex-1" content="hnhiringtrends.com" gapX={300} gapY={500}>
+        <div className="w-full flex-1" >
             <Line data={data} options={options}/>
-        </Watermark>
+        </div>
         <Loading loading={loading}/>
         <div className="flex flex-col-reverse flex-wrap sm:flex-row mt-6 sm:space-x-10 px-10">
             {searches.map(({filterString, uuid, source}, filterIndex) =>
