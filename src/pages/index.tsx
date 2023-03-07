@@ -28,7 +28,7 @@ import {Loading} from "@/components/Loading";
 import {useRouterQueryState} from "@/hooks/useRouterQueryState";
 import {SelectInput} from "@/components/SelectInput";
 import {entriesToRecord} from "@/util";
-
+import {useWindowWidth} from "@react-hook/window-size/throttled";
 
 ChartJS.register(
     PointElement,
@@ -80,6 +80,7 @@ export default function Home() {
             }
         ], 'q')
     const [zoomOptions, setZoomOptions] = useState({})
+    const screenWidth = useWindowWidth()
 
     useEffect(() => {
         async function loadZoomPlugin() {
@@ -111,12 +112,31 @@ export default function Home() {
         return <div>Loading...</div>
     }
 
+    function modifiedConfig(i: number, isMovingAverage: boolean) {
+        const isMobile = screenWidth < 640
+        const isPrimaryGraph =  isMobile ? isMovingAverage : !isMovingAverage
+        const {filterString, source} = searches[i]
+        const labelText = filterString ? `${ChartConfig[source].label} (${filterString})` : ChartConfig[source].label
+        const label =  isPrimaryGraph ? labelText : ''
+        if (isPrimaryGraph) {
+            return {
+                label,
+                borderColor: ChartColors[i],
+                backgroundColor: ChartColors[i] + "40",
+            }
+        } else {
+            return {
+                label,
+                borderColor: "#00000010",
+                backgroundColor: "#00000010",
+            }
+        }
+
+    }
+
     const datasets: ChartDataset<"line", Point[]>[] = searches.map(({filterString, source}, filterIndex) =>
         ({
-            ...ChartConfig[source],
-            ...(filterString && {label: `${ChartConfig[source].label} (${filterString})`}),
-            borderColor: ChartColors[filterIndex],
-            backgroundColor: ChartColors[filterIndex] + "40",
+            ...modifiedConfig(filterIndex, false),
             tension: 0.2,
             data: hnData[source].map(post => ({
                 x: post.timestampMs,
@@ -130,11 +150,10 @@ export default function Home() {
     const originalDatasetsLength = datasets.length
     for (let i = 0; i < originalDatasetsLength; i++) {
         datasets.push({
-            ...datasets[i],
+            ...modifiedConfig(i, true),
+            tension: 0.2,
             data: movingAverageFromRight(datasets[i].data, 6),
-            borderColor: "#00000010",
             pointStyle: false,
-            label: ''
         })
     }
 
