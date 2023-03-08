@@ -168,15 +168,12 @@ export default function Home() {
         }
     }, [hnData, searches, screenWidth])
 
-    if (!hnData) {
-        return <div>Loading...</div>
-    }
 
     function areValidElements(elements: ActiveElement[]) {
         return elements.length > 0 && elements[0].datasetIndex < searches.length;
     }
 
-    const options: ChartOptions<'line'> = {
+    const options: ChartOptions<'line'> = useMemo(() => ({
         maintainAspectRatio: false,
         scales: {
             x: {
@@ -211,14 +208,17 @@ export default function Home() {
             if (areValidElements(elements)) {
                 const datasetIndex = elements[0].datasetIndex
                 const index = elements[0].index
-                window.open(hnData[searches[datasetIndex].source][index].url, "_blank")
+                window.open(hnData![searches[datasetIndex].source][index].url, "_blank")
             }
         },
         onHover: (event, elements) => {
             document.querySelector('body')!.style.cursor = areValidElements(elements) ? "pointer" : "default"
         }
-    }
+    }), [hnData, searches, zoomOptions])
 
+    if (!hnData) {
+        return <div>Loading...</div>
+    }
 
     return <div className="flex flex-col h-[800px]">
         <Header/>
