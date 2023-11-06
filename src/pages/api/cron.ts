@@ -20,19 +20,19 @@ export default async function handler(
             return
         }
     } catch (err) {
-        response.status(500).json({ statusCode: 500, message: (err as Error).message })
+        response.status(500).json({ success: false, error: (err as Error).message })
         return
     }
 
-    const fullData = await generateHnData()
-    const smallData = removeCommentsFromHnData(fullData)
     try {
+        const fullData = await generateHnData()
+        const smallData = removeCommentsFromHnData(fullData)
         await Promise.all([
             uploadString({Bucket: process.env.CF_BUCKET!, Key: "full-data.json", Body: JSON.stringify(fullData)}),
             uploadString({Bucket: process.env.CF_BUCKET!, Key: "small-data.json", Body: JSON.stringify(smallData)})
         ])
     } catch (e) {
-        response.status(500).json({success: false, error: e})
+        response.status(500).json({success: false, error: (e as Error).message})
         return
     }
 
